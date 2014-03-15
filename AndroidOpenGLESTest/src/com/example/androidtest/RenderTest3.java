@@ -3,6 +3,7 @@ package com.example.androidtest;
 import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
@@ -21,8 +22,8 @@ public class RenderTest3 extends RenderBase {
 	private float[] lines = {
 			0.0f, 0.0f, 0.0f,
 			0.1f, 0.0f, 0.0f,
-			0.0f, 0.1f, 0.0f,
 			0.1f, 0.1f, 0.0f,
+			0.0f, 0.1f, 0.0f,
 	};
 	private float[] colors = {
 			1.0f, 1.0f, 1.0f, 1.0f,
@@ -31,8 +32,24 @@ public class RenderTest3 extends RenderBase {
 			1.0f, 1.0f, 1.0f, 1.0f,
 	};
 	
+	private float[] origin = {
+			-0.01f, -0.01f, 0.0f,
+			-0.01f, +0.01f, 0.0f,
+			+0.01f, +0.01f, 0.0f,
+			+0.01f, -0.01f, 0.0f
+	};
+	
+	private float[] redColor = { // RGBA
+			1.0f, 0.0f, 0.0f, 1.0f,
+			1.0f, 0.0f, 0.0f, 1.0f,
+			1.0f, 0.0f, 0.0f, 1.0f,
+			1.0f, 0.0f, 0.0f, 1.0f		
+	};
+	
 	private FloatBuffer lineBuffer;
 	private FloatBuffer colorBuffer;
+	private FloatBuffer originBuffer;
+	private FloatBuffer originColorBuffer;
 
 	public RenderTest3(Context context) {
 		super(context);
@@ -67,7 +84,7 @@ public class RenderTest3 extends RenderBase {
 		gl.glPopMatrix();
 		// fills upper-right field
 		gl.glPushMatrix();
-		for(int i = 0; i <= 10; i++) {			
+		for(int i = 0; i < 10; i++) {			
 			for(int j = 0; j < 10; j++) {
 				gl.glPushMatrix();
 				gl.glTranslatef(+0.1f * i, +0.1f * j, 0.0f);
@@ -97,7 +114,12 @@ public class RenderTest3 extends RenderBase {
 				gl.glPopMatrix();
 			}
 		}
-		gl.glPopMatrix();		
+		gl.glPopMatrix();
+		
+		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, originBuffer);
+		gl.glColorPointer(4, GL10.GL_FLOAT, 0, originColorBuffer);
+		
+		gl.glDrawArrays(GL10.GL_LINE_LOOP, 0, 4);		
 	}
 
 	@Override
@@ -122,7 +144,7 @@ public class RenderTest3 extends RenderBase {
 		
 		lineBuffer = this.createFloatBuffer(lines);
 		colorBuffer = this.createFloatBuffer(colors);
-		
-		
+		originBuffer = this.createFloatBuffer(origin);
+		originColorBuffer = this.createFloatBuffer(redColor);		
 	}
 }
