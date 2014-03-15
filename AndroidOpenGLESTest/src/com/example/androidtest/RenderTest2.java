@@ -10,7 +10,7 @@ import android.util.Log;
 
 /**
  * This class displays a grid in OpenGL world coordinate system. 
- * In orthogonal perspective mode.
+ * In orthogonal mode.
  * On Galaxy S3, fps is 60.
  * @author Jongjoo Kim
  *

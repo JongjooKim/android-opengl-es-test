@@ -9,6 +9,12 @@ import android.content.Context;
 import android.opengl.GLU;
 import android.util.Log;
 
+/**
+ * This class also displays a grid in perpective mode.
+ * 
+ * @author Jongjoo Kim
+ *
+ */
 public class RenderTest3 extends RenderBase {
 	private final String LOG_TAG = "RenderTest3";
 	
@@ -46,7 +52,7 @@ public class RenderTest3 extends RenderBase {
 		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, lineBuffer);
 		gl.glColorPointer(4, GL10.GL_FLOAT, 0, colorBuffer);
 		
-		GLU.gluLookAt(gl, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		GLU.gluLookAt(gl, 0.0f, 0.0f, 4.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 			
 		// fills upper-left field
 		gl.glPushMatrix();
