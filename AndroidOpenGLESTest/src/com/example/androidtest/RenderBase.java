@@ -6,6 +6,7 @@ import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import android.R.anim;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,7 +19,7 @@ import android.view.MotionEvent;
 abstract public class RenderBase implements Renderer {
 	protected Context mContext;
 	public RenderBase(Context context){
-		mContext = context;
+		mContext = context;		
 	}
 	
 	public FloatBuffer createFloatBuffer(float data[]){
@@ -51,4 +52,29 @@ abstract public class RenderBase implements Renderer {
 	public boolean handleKeyEvent(int keyCode, KeyEvent event) {
 		return false;
 	}	
+	
+	/**
+	 * converts screen coordinate(x,y) to OpenGL world coordinate system(x', y', z')<br>
+	 * <img src="https://drive.google.com/uc?export=download&id=0B-4Nl1O9x0z1amhDd3BWNEk1OFk"
+	 * alt="calculation description..."/>
+	 * <img src="https://drive.google.com/uc?export=download&id=0B-4Nl1O9x0z1RDRiaGxUVUQtSVU"/>
+	 * @param x	screen x
+	 * @param y	screen y
+	 * @param width screen width
+	 * @param height screen height
+	 * @return	Matrix converted to opengl world coordinate system(x', y', z')
+	 */
+	public float[] convertScreenCS2WorldCS(float x, float y, float width, float height) {
+		/**
+		 * world coordinate converted.
+		 * [0] : x, [1] : y, [2] : z
+		 */
+		float[] wc = new float[3];
+		
+		wc[0] = (2.0f / width) * x - 1.0f;
+		wc[1] = 1.0f - (2.0f / height) * y;
+		wc[2] = 0.f;
+		
+		return wc;
+	}
 }
