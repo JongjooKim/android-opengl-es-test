@@ -197,13 +197,14 @@ public class RenderTest2 extends RenderBase {
 				action == MotionEvent.ACTION_MOVE ||
 				action == MotionEvent.ACTION_UP ||
 				action == MotionEvent.ACTION_CANCEL) {
-			float[] point = convertScreenCS2WorldCS(event.getX(), event.getY(), 
+			float[] point = convertSSC2WSCInOrthogonal(event.getX(), event.getY(), 
 					width, height);		
 			eventPointF = new PointF();
 			eventPointF.x = point[0];	// x
-			eventPointF.y = point[1];	// y			
+			eventPointF.y = point[1];	// y	
+			return false;
 		} 		
 		
-		return false;
+		return super.handleTouchEvent(event);
 	}
 }

@@ -1,5 +1,7 @@
 package com.example.androidtest;
 
+import javax.microedition.khronos.opengles.GL;
+import com.example.android.apis.graphics.spritetext.MatrixTrackingGL;
 import android.app.Activity;
 import android.content.Intent;
 import android.opengl.GLSurfaceView;
@@ -52,7 +54,15 @@ public class OpenGlActivity extends Activity {
 	
 	private void setGLSurfaceView() {
 		glSurfaceView = (GLSurfaceView)findViewById(R.id.gl_surface_view);
-		glSurfaceView.setRenderer(mCurrentRender);		
+		glSurfaceView.setRenderer(mCurrentRender);
+		glSurfaceView.setGLWrapper(new GLSurfaceView.GLWrapper() {			
+			@Override
+			public GL wrap(GL gl) {
+				Log.d(LOG_TAG, "glSurfaceView.wrap() : gl : " + gl);
+				
+				return new MatrixTrackingGL(gl);
+			}
+		});
 	}	
 	
 	@Override
