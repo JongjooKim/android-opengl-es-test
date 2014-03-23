@@ -18,10 +18,16 @@ package com.example.android.apis.graphics.spritetext;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import android.util.Log;
+
 public class MatrixGrabber {
+	private final String LOG_TAG = "MatrixGrabber";
+	
     public MatrixGrabber() {
-        mModelView = new float[16];
-        mProjection = new float[16];
+    	Log.d(LOG_TAG, "MatrixGrabber() is called...");
+    	
+		mModelView = new float[16];
+		mProjection = new float[16];
     }
 
     /**
@@ -30,8 +36,10 @@ public class MatrixGrabber {
      * @param gl
      */
     public void getCurrentState(GL10 gl) {
-        getCurrentProjection(gl);
-        getCurrentModelView(gl);
+    	Log.d(LOG_TAG, "getCurrentState() is called...");
+    	
+		getCurrentProjection(gl);
+		getCurrentModelView(gl);
     }
 
     /**
@@ -40,7 +48,9 @@ public class MatrixGrabber {
      * @param gl
      */
     public void getCurrentModelView(GL10 gl) {
-        getMatrix(gl, GL10.GL_MODELVIEW, mModelView);
+    	Log.d(LOG_TAG, "getCurrentModelView() is called...");
+    	
+		getMatrix(gl, GL10.GL_MODELVIEW, mModelView);
     }
 
     /**
@@ -49,13 +59,17 @@ public class MatrixGrabber {
      * @param gl
      */
     public void getCurrentProjection(GL10 gl) {
-        getMatrix(gl, GL10.GL_PROJECTION, mProjection);
+    	Log.d(LOG_TAG, "getCurrentProjection() is called...");
+    	
+    	getMatrix(gl, GL10.GL_PROJECTION, mProjection);
     }
 
     private void getMatrix(GL10 gl, int mode, float[] mat) {
-        MatrixTrackingGL gl2 = (MatrixTrackingGL) gl;
-        gl2.glMatrixMode(mode);
-        gl2.getMatrix(mat, 0);
+    	Log.d(LOG_TAG, "getMatrix() : mode : " + mode + ", mat : " + mat);
+    	
+		MatrixTrackingGL gl2 = (MatrixTrackingGL) gl;
+		gl2.glMatrixMode(mode);
+		gl2.getMatrix(mat, 0);
     }
 
     public float[] mModelView;
