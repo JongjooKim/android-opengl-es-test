@@ -97,7 +97,7 @@ public class MatrixTrackingGL implements GL, GL10, GL10Ext, GL11, GL11Ext {
     }
 
     public void glAlphaFuncx(int func, int ref) {
-    	Log.d(LOG_TAG, "glAlphaFunc() : func : " + func + ", ref : " + ref);
+    	Log.d(LOG_TAG, "glAlphaFuncx() : func : " + func + ", ref : " + ref);
     	
         mgl.glAlphaFuncx(func, ref);
     }
@@ -1171,7 +1171,7 @@ public class MatrixTrackingGL implements GL, GL10, GL10Ext, GL11, GL11Ext {
     }
 
     public void glGetTexEnviv(int env, int pname, IntBuffer params) {
-    	Log.d(LOG_TAG, "MatrixStack() : env : " + env + ", pname : " + pname +
+    	Log.d(LOG_TAG, "glGetTexEnviv() : env : " + env + ", pname : " + pname +
     			", params : " + params);
        throw new UnsupportedOperationException();
     }
