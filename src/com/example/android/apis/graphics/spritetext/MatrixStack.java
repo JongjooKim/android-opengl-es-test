@@ -49,9 +49,9 @@ public class MatrixStack {
     private void commonInit(int maxDepth) {
     	Log.d(LOG_TAG, "commonInit() : maxDepth : " + maxDepth);
     	
-       mMatrix = new float[maxDepth * MATRIX_SIZE];
-       mTemp = new float[MATRIX_SIZE * 2];
-       glLoadIdentity();
+    	mMatrix = new float[maxDepth * MATRIX_SIZE];
+    	mTemp = new float[MATRIX_SIZE * 2];
+    	glLoadIdentity();
     }
 
     public void glFrustumf(float left, float right, float bottom, float top,
@@ -189,26 +189,26 @@ public class MatrixStack {
     	Log.d(LOG_TAG, "glRotatex() : angle : " + angle + ", x : " + x + 
     			", y : " + y + ", z : " + z);
     	
-       glRotatef(angle, fixedToFloat(x), fixedToFloat(y), fixedToFloat(z));
+    	glRotatef(angle, fixedToFloat(x), fixedToFloat(y), fixedToFloat(z));
     }
 
     public void glScalef(float x, float y, float z) {
     	Log.d(LOG_TAG, "glScalef() : x : " + x + ", y : " + y + 
     			", z : " + z);
     	
-       Matrix.scaleM(mMatrix, mTop, x, y, z);
+    	Matrix.scaleM(mMatrix, mTop, x, y, z);
     }
 
     public void glScalex(int x, int y, int z) {
     	Log.d(LOG_TAG, "glScalex() : x : " + x + ", y : " + y + ", z : " + z);
     	
-       glScalef(fixedToFloat(x), fixedToFloat(y), fixedToFloat(z));
+    	glScalef(fixedToFloat(x), fixedToFloat(y), fixedToFloat(z));
     }
 
     public void glTranslatef(float x, float y, float z) {
     	Log.d(LOG_TAG, "glTranslatef() : x : " + x + ", y : " + y + ", z : " + z);
     	
-       Matrix.translateM(mMatrix, mTop, x, y, z);
+    	Matrix.translateM(mMatrix, mTop, x, y, z);
     }
 
     public void glTranslatex(int x, int y, int z) {
@@ -220,29 +220,30 @@ public class MatrixStack {
     public void getMatrix(float[] dest, int offset) {
     	Log.d(LOG_TAG, "getMatrix() : dest : " + dest + ", offset : " + offset);
     	
-       System.arraycopy(mMatrix, mTop, dest, offset, MATRIX_SIZE);
+    	System.arraycopy(mMatrix, mTop, dest, offset, MATRIX_SIZE);
     }
 
     private float fixedToFloat(int x) {
     	Log.d(LOG_TAG, "fixedToFloat() : x : " + x);
     	
-       return x * (1.0f / 65536.0f);
+    	return x * (1.0f / 65536.0f);
     }
 
     private void preflight_adjust(int dir) {
     	Log.d(LOG_TAG, "preflight_adjust() : dir : " + dir);
     	
-       int newTop = mTop + dir * MATRIX_SIZE;
-       if (newTop < 0) {
-           throw new IllegalArgumentException("stack underflow");
+    	int newTop = mTop + dir * MATRIX_SIZE;
+    	if (newTop < 0) {
+    		throw new IllegalArgumentException("stack underflow");
         }
-       if (newTop + MATRIX_SIZE > mMatrix.length) {
-    	   throw new IllegalArgumentException("stack overflow");
+    	if (newTop + MATRIX_SIZE > mMatrix.length) {
+    		throw new IllegalArgumentException("stack overflow");
         }
     }
 
-    private void adjust(int dir) {
-    	Log.d(LOG_TAG, "adjust() : dir : " + dir);
-       mTop += dir * MATRIX_SIZE;
+    private void adjust(int dir) {    	
+    	mTop += dir * MATRIX_SIZE;
+    	
+    	Log.d(LOG_TAG, "adjust() : dir : " + dir + ", mTop : " + mTop);
     }
 }
