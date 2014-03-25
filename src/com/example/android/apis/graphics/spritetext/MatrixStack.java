@@ -227,12 +227,13 @@ public class MatrixStack {
     	Log.d(LOG_TAG, "fixedToFloat() : x : " + x);
     	
     	return x * (1.0f / 65536.0f);
-    }
+    }	
 
-    private void preflight_adjust(int dir) {
-    	Log.d(LOG_TAG, "preflight_adjust() : dir : " + dir);
-    	
+    private void preflight_adjust(int dir) {    	
     	int newTop = mTop + dir * MATRIX_SIZE;
+    	
+    	Log.d(LOG_TAG, "preflight_adjust() : dir : " + dir + ", mTop : " + mTop +
+    			", newTop : " + newTop);
     	if (newTop < 0) {
     		throw new IllegalArgumentException("stack underflow");
         }

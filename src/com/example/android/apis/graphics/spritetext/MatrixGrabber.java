@@ -23,6 +23,9 @@ import android.util.Log;
 public class MatrixGrabber {
 	private final String LOG_TAG = "MatrixGrabber";
 	
+	public float[] mModelView;
+	public float[] mProjection;
+	
     public MatrixGrabber() {
     	Log.d(LOG_TAG, "MatrixGrabber() is called...");
     	
@@ -71,7 +74,4 @@ public class MatrixGrabber {
 		gl2.glMatrixMode(mode);
 		gl2.getMatrix(mat, 0);
     }
-
-    public float[] mModelView;
-    public float[] mProjection;
 }
