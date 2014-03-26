@@ -74,7 +74,9 @@ public class RenderTest3 extends RenderBase {
 	}
 
 	@Override
-	public void onDrawFrame(GL10 gl) {		
+	public void onDrawFrame(GL10 gl) {
+		Log.d(LOG_TAG, "onDrawFrame() : beginning...");
+		
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 		gl.glLoadIdentity();
 		
@@ -153,6 +155,8 @@ public class RenderTest3 extends RenderBase {
 			
 			gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
 		}
+		
+		Log.d(LOG_TAG, "onDrawFrame() : ending...");
 	}
 
 	@Override
