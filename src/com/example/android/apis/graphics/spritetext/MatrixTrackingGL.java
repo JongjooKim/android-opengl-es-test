@@ -469,6 +469,7 @@ public class MatrixTrackingGL implements GL, GL10, GL10Ext, GL11, GL11Ext {
 
     public void glLoadIdentity() {
     	Log.d(LOG_TAG, "glLoadIdentity() is called...");
+    	
         mCurrent.glLoadIdentity();
         mgl.glLoadIdentity();
         if ( _check) check();
@@ -1435,20 +1436,20 @@ public class MatrixTrackingGL implements GL, GL10, GL10Ext, GL11, GL11Ext {
     	
 		int oesMode;
 		switch (mMatrixMode) {
-		case GL_MODELVIEW:
-		    oesMode = GL11.GL_MODELVIEW_MATRIX_FLOAT_AS_INT_BITS_OES;
-		    break;
-		case GL_PROJECTION:
-		    oesMode = GL11.GL_PROJECTION_MATRIX_FLOAT_AS_INT_BITS_OES;
-		    break;
-		case GL_TEXTURE:
-		    oesMode = GL11.GL_TEXTURE_MATRIX_FLOAT_AS_INT_BITS_OES;
-		    break;
-		default:
-		    throw new IllegalArgumentException("Unknown matrix mode");
+			case GL_MODELVIEW:
+			    oesMode = GL11.GL_MODELVIEW_MATRIX_FLOAT_AS_INT_BITS_OES;
+			    break;
+			case GL_PROJECTION:
+			    oesMode = GL11.GL_PROJECTION_MATRIX_FLOAT_AS_INT_BITS_OES;
+			    break;
+			case GL_TEXTURE:
+			    oesMode = GL11.GL_TEXTURE_MATRIX_FLOAT_AS_INT_BITS_OES;
+			    break;
+			default:
+			    throw new IllegalArgumentException("Unknown matrix mode");
 		}
 		
-		if ( mByteBuffer == null) {
+		if(mByteBuffer == null) {
 		    mCheckA = new float[16];
 		    mCheckB = new float[16];
 		    mByteBuffer = ByteBuffer.allocateDirect(64);
@@ -1464,12 +1465,12 @@ public class MatrixTrackingGL implements GL, GL10, GL10Ext, GL11, GL11Ext {
 		boolean fail = false;
 		for(int i = 0; i < 16; i++) {
 		    if (mCheckA[i] != mCheckB[i]) {
-		        Log.d("GLMatWrap", "i:" + i + " a:" + mCheckA[i]
-		        + " a:" + mCheckB[i]);
+		        Log.d(LOG_TAG, "check() : i : " + i + ", a : " + mCheckA[i] + 
+		        		", b : " + mCheckB[i]);
 		        fail = true;
 		    }
 		}
-		if (fail) {
+		if(fail) {
 		    throw new IllegalArgumentException("Matrix math difference.");
 		}
     }
