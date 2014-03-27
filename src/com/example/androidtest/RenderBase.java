@@ -117,6 +117,10 @@ abstract public class RenderBase implements Renderer {
 				modelViewMatrix, 0, projectMatrix, 0,
 				viewport, 0, posFar, 0);		
 		
+		// turns into modelview mode
+		matrixGrabber.getCurrentModelView(gl);
+		gl.glMatrixMode(GL10.GL_MODELVIEW);
+		
 		return posNear;
 	}	
 	

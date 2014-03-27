@@ -139,7 +139,7 @@ public class RenderTest3 extends RenderBase {
 		
 		gl.glDrawArrays(GL10.GL_LINE_LOOP, 0, 4);		
 		
-		// draws a touch point
+		// draws a touch point		
 		if(eventPoint != null) {
 			float[] point = {
 					eventPoint[0] - 0.01f, eventPoint[1] - 0.01f, eventPoint[2],
@@ -152,7 +152,7 @@ public class RenderTest3 extends RenderBase {
 			gl.glVertexPointer(3, GL10.GL_FLOAT, 0, pointBuffer);
 			
 			gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
-		}
+		}		
 	}
 
 	@Override
@@ -193,11 +193,11 @@ public class RenderTest3 extends RenderBase {
 		if(action == MotionEvent.ACTION_DOWN ||
 				action == MotionEvent.ACTION_MOVE ||
 				action == MotionEvent.ACTION_UP ||
-				action == MotionEvent.ACTION_CANCEL) {
+				action == MotionEvent.ACTION_CANCEL) {			
 			float[] point = convertSSC2WSCInPerspective(gl, 
 					event.getX(), event.getY(), width, height);
 			eventPoint = point;
-			return false;
+			return false;			
 		}
 		
 		return super.handleTouchEvent(event);

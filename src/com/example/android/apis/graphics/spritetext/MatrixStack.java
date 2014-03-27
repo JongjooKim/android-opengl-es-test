@@ -28,8 +28,8 @@ import java.nio.IntBuffer;
 public class MatrixStack {
 	private final String LOG_TAG = "MatrixStack";
 	
-	private final static int DEFAULT_MAX_DEPTH = 32;
-	private final static int MATRIX_SIZE = 16;
+	private final static int DEFAULT_MAX_DEPTH = 32;	
+	private final static int MATRIX_SIZE = 16;	// 4 by 4 matrix
 	private float[] mMatrix;
 	private int mTop;
 	private float[] mTemp;
