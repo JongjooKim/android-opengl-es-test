@@ -73,7 +73,10 @@ public class OpenGlActivity extends Activity {
 		// Log.d(LOG_TAG, "onTouchEvent() : event : " + event);
 		
 		if(mCurrentRender != null) {
-			mCurrentRender.handleTouchEvent(event);
+			MotionEvent event2 = MotionEvent.obtain(event);
+			// TODO converts (x, y) to (x,y) on viewport
+			// TODO subtracts height of title bar and status bar
+			mCurrentRender.handleTouchEvent(event2);
 		}
 		
 		return super.onTouchEvent(event);
