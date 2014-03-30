@@ -26,7 +26,7 @@ import java.nio.IntBuffer;
  * A matrix stack, similar to OpenGL ES's internal matrix stack.
  */
 public class MatrixStack {
-	private final String LOG_TAG = "MatrixStack";
+	private String LOG_TAG = "MatrixStack";
 	
 	private final static int DEFAULT_MAX_DEPTH = 32;	
 	private final static int MATRIX_SIZE = 16;	// 4 by 4 matrix
@@ -34,9 +34,10 @@ public class MatrixStack {
 	private int mTop;
 	private float[] mTemp;
 	
-	public MatrixStack() {
+	public MatrixStack(String logtag) {
 		Log.d(LOG_TAG, "MatrixStack() is called...");
     	
+		LOG_TAG += ("_" + logtag);
        commonInit(DEFAULT_MAX_DEPTH);
     }
 
@@ -58,7 +59,7 @@ public class MatrixStack {
             float near, float far) {
     	Log.d(LOG_TAG, "glFrustumf() : left : " + left + ", right : " + right +
     			", bottom : " + bottom + ", top : " + top + ", near : " + near +
-    			", far : " + far);
+    			", far : " + far + ", mTop : " + mTop);
     	
     	Matrix.frustumM(mMatrix, mTop, left, right, bottom, top, near, far);
     }
@@ -75,25 +76,27 @@ public class MatrixStack {
     }
 
     public void glLoadIdentity() {
-    	Log.d(LOG_TAG, "glLoadIdentity() is called...");
+    	Log.d(LOG_TAG, "glLoadIdentity() : mTop : " + mTop);
     	
        Matrix.setIdentityM(mMatrix, mTop);
     }
 
     public void glLoadMatrixf(float[] m, int offset) {
-    	Log.d(LOG_TAG, "glLoadMatrixf() : m : " + m + ", offset : " + offset);
+    	Log.d(LOG_TAG, "glLoadMatrixf() : m : " + m + ", offset : " + offset +
+    			", mTop : " + mTop);
     	
     	System.arraycopy(m, offset, mMatrix, mTop, MATRIX_SIZE);
     }
 
     public void glLoadMatrixf(FloatBuffer m) {
-    	Log.d(LOG_TAG, "glLoadMatrixf() : m : " + m);
+    	Log.d(LOG_TAG, "glLoadMatrixf() : m : " + m + ", mTop : " + mTop);
     	
        m.get(mMatrix, mTop, MATRIX_SIZE);
     }
 
     public void glLoadMatrixx(int[] m, int offset) {
-    	Log.d(LOG_TAG, "glLoadMatrixx() : m : " + m + ", offset : " + offset);
+    	Log.d(LOG_TAG, "glLoadMatrixx() : m : " + m + ", offset : " + offset +
+    			", mTop : " + mTop);
     	
        for(int i = 0; i < MATRIX_SIZE; i++) {
     	   mMatrix[mTop + i] = fixedToFloat(m[offset + i]);
@@ -109,7 +112,8 @@ public class MatrixStack {
     }
 
     public void glMultMatrixf(float[] m, int offset) {
-    	Log.d(LOG_TAG, "glMultMatrixf() : m : " + m + ", offset : " + offset);
+    	Log.d(LOG_TAG, "glMultMatrixf() : m : " + m + ", offset : " + offset +
+    			", mTop : " + mTop);
     	
 		System.arraycopy(mMatrix, mTop, mTemp, 0, MATRIX_SIZE);
 		Matrix.multiplyMM(mMatrix, mTop, mTemp, 0, m, offset);
@@ -144,7 +148,7 @@ public class MatrixStack {
             float near, float far) {
     	Log.d(LOG_TAG, "glOrthof() : left : " + left + ", right : " + right +
     			", bottom : " + bottom + ", top : " + top + ", near : " + near +
-    			", far : " + far);
+    			", far : " + far + ", mTop : " + mTop);
     	
 		Matrix.orthoM(mMatrix, mTop, left, right, bottom, top, near, far);
     }
@@ -168,7 +172,7 @@ public class MatrixStack {
     }
 
     public void glPushMatrix() {
-    	Log.d(LOG_TAG, "glPushMatrix() is called...");
+    	Log.d(LOG_TAG, "glPushMatrix() : mTop : " + mTop);
     	
     	preflight_adjust(1);
     	System.arraycopy(mMatrix, mTop, mMatrix, mTop + MATRIX_SIZE,
@@ -178,7 +182,7 @@ public class MatrixStack {
 
     public void glRotatef(float angle, float x, float y, float z) {
     	Log.d(LOG_TAG, "glRotatef() : angle : " + angle + ", x : " + x +
-    			", y : " + y + ", z : " + z);
+    			", y : " + y + ", z : " + z + ", mTop : " + mTop);
     	
     	Matrix.setRotateM(mTemp, 0, angle, x, y, z);
     	System.arraycopy(mMatrix, mTop, mTemp, MATRIX_SIZE, MATRIX_SIZE);
@@ -194,7 +198,7 @@ public class MatrixStack {
 
     public void glScalef(float x, float y, float z) {
     	Log.d(LOG_TAG, "glScalef() : x : " + x + ", y : " + y + 
-    			", z : " + z);
+    			", z : " + z + ", mTop : " + mTop);
     	
     	Matrix.scaleM(mMatrix, mTop, x, y, z);
     }
@@ -206,19 +210,22 @@ public class MatrixStack {
     }
 
     public void glTranslatef(float x, float y, float z) {
-    	Log.d(LOG_TAG, "glTranslatef() : x : " + x + ", y : " + y + ", z : " + z);
+    	Log.d(LOG_TAG, "glTranslatef() : x : " + x + ", y : " + y + ", z : " + z +
+    			", mTop : " + mTop);
     	
     	Matrix.translateM(mMatrix, mTop, x, y, z);
     }
 
     public void glTranslatex(int x, int y, int z) {
-    	Log.d(LOG_TAG, "glTranslatex() : x : " + x + ", y : " + y + ", z : " + z);
+    	Log.d(LOG_TAG, "glTranslatex() : x : " + x + ", y : " + y + ", z : " + z +
+    			", mTop : " + mTop);
     	
     	glTranslatef(fixedToFloat(x), fixedToFloat(y), fixedToFloat(z));
     }
 
     public void getMatrix(float[] dest, int offset) {
-    	Log.d(LOG_TAG, "getMatrix() : dest : " + dest + ", offset : " + offset);
+    	Log.d(LOG_TAG, "getMatrix() : dest : " + dest + ", offset : " + offset + 
+    			", mTop : " + mTop);
     	
     	System.arraycopy(mMatrix, mTop, dest, offset, MATRIX_SIZE);
     }
@@ -235,14 +242,17 @@ public class MatrixStack {
     	Log.d(LOG_TAG, "preflight_adjust() : dir : " + dir + ", mTop : " + mTop +
     			", newTop : " + newTop);
     	if (newTop < 0) {
-    		throw new IllegalArgumentException("stack underflow");
+    		// throw new IllegalArgumentException("stack underflow");
         }
     	if (newTop + MATRIX_SIZE > mMatrix.length) {
     		throw new IllegalArgumentException("stack overflow");
         }
     }
 
-    private void adjust(int dir) {    	
+    private void adjust(int dir) {
+    	if(dir == -1 && mTop == 0)
+    		return;
+    	
     	mTop += dir * MATRIX_SIZE;
     	
     	Log.d(LOG_TAG, "adjust() : dir : " + dir + ", mTop : " + mTop);

@@ -74,9 +74,9 @@ public class MatrixTrackingGL implements GL, GL10, GL10Ext, GL11, GL11Ext {
        Log.d(LOG_TAG, "constructor() : " + ", mgl10Ext : " + mgl10Ext + 
     		   ", mgl11 : " + mgl11 + ", mgl11Ext : " + mgl11Ext);
         
-		mModelView = new MatrixStack();
-		mProjection = new MatrixStack();
-		mTexture = new MatrixStack();
+		mModelView = new MatrixStack("model");
+		mProjection = new MatrixStack("projection");
+		mTexture = new MatrixStack("texture");
 		mCurrent = mModelView;
 		mMatrixMode = GL10.GL_MODELVIEW;
     }
@@ -551,25 +551,27 @@ public class MatrixTrackingGL implements GL, GL10, GL10Ext, GL11, GL11Ext {
     			", params : " + params);
         mgl.glMaterialxv(face, pname, params);
     }
-
+    
     public void glMatrixMode(int mode) {
     	Log.d(LOG_TAG, "glMatrixMode() : mode : " + mode);
-        switch (mode) {
-        case GL10.GL_MODELVIEW:
-            mCurrent = mModelView;
-            break;
-        case GL10.GL_TEXTURE:
-            mCurrent = mTexture;
-            break;
-        case GL10.GL_PROJECTION:
-            mCurrent = mProjection;
-            break;
-        default:
-            throw new IllegalArgumentException("Unknown matrix mode: " + mode);
+    	
+       switch (mode) {
+       	case GL10.GL_MODELVIEW:
+       		mCurrent = mModelView;
+       		break;
+       	case GL10.GL_TEXTURE:
+       		mCurrent = mTexture;
+       		break;
+       	case GL10.GL_PROJECTION:
+       		mCurrent = mProjection;
+       		break;
+       	default:
+       		throw new IllegalArgumentException("Unknown matrix mode: " + mode);
         }
-        mgl.glMatrixMode(mode);
-        mMatrixMode = mode;
-        if ( _check) check();
+       mgl.glMatrixMode(mode);
+        
+       mMatrixMode = mode;
+       if ( _check) check();
     }
 
     public void glMultMatrixf(float[] m, int offset) {

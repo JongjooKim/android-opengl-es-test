@@ -92,7 +92,7 @@ abstract public class RenderBase implements Renderer {
 		return wc;
 	}	
 	
-	public float[] convertSSC2WSCInPerspective(GL10 gl, float x, float y, 
+	public float[] convertSSC2WSCInPerspective1(GL10 gl, float x, float y, 
 			int width, int height) {
 		float[] posNear = new float[4];
 		float[] posFar = new float[4];
@@ -101,10 +101,11 @@ abstract public class RenderBase implements Renderer {
 		int[] viewport = {0, 0, width, height};
 		float winX, winY;
 		
+		matrixGrabber.getCurrentProjection(gl);
+		projectMatrix = matrixGrabber.mProjection;
 		matrixGrabber.getCurrentModelView(gl);
 		modelViewMatrix = matrixGrabber.mModelView;
-		matrixGrabber.getCurrentProjection(gl);
-		projectMatrix = matrixGrabber.mProjection;		
+				
 		winX = x;
 		winY = height - y;
 		
@@ -112,17 +113,33 @@ abstract public class RenderBase implements Renderer {
 		GLU.gluUnProject(winX, winY, 0.0f, 
 				modelViewMatrix, 0, projectMatrix, 0, 
 				viewport, 0, posNear, 0);		
+		
 		// for far plane
 		GLU.gluUnProject(winX, winY, 1.0f,
 				modelViewMatrix, 0, projectMatrix, 0,
 				viewport, 0, posFar, 0);		
 		
 		// turns into modelview mode
-		matrixGrabber.getCurrentModelView(gl);
-		gl.glMatrixMode(GL10.GL_MODELVIEW);
+		// matrixGrabber.getCurrentModelView(gl);
+		// gl.glMatrixMode(GL10.GL_MODELVIEW);
 		
 		return posNear;
-	}	
+	}
+	
+	public float[] convertSSC2WSCInPerspective2(GL10 gl, float x, float y, 
+			int width, int height) {		
+		/**
+		 * world coordinate converted.
+		 * [0] : x, [1] : y, [2] : z
+		 */
+		float[] wc = new float[3];
+		
+		wc[0] = (2.0f / width) * x - 1.0f;
+		wc[1] = 1.0f - (2.0f / height) * y;
+		wc[2] = 1.f;
+		
+		return wc;
+	}
 	
 	public class Vector3 {
 		private float x;

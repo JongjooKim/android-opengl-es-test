@@ -21,7 +21,7 @@ import android.view.MotionEvent;
  * @author Jongjoo Kim
  *
  */
-public class RenderTest3 extends RenderBase {
+public class RenderTest4 extends RenderBase {
 	private final String LOG_TAG = "RenderTest3";
 	
 	private float[] lines = {
@@ -65,11 +65,9 @@ public class RenderTest3 extends RenderBase {
 	private FloatBuffer colorBuffer;
 	private FloatBuffer originBuffer;
 	private FloatBuffer originColorBuffer;
-	private FloatBuffer blueColorBuffer;
-	
-	
+	private FloatBuffer blueColorBuffer;	
 
-	public RenderTest3(Context context) {
+	public RenderTest4(Context context) {
 		super(context);		
 	}
 
@@ -197,8 +195,11 @@ public class RenderTest3 extends RenderBase {
 		if(action == MotionEvent.ACTION_DOWN ||
 				action == MotionEvent.ACTION_MOVE ||
 				action == MotionEvent.ACTION_UP ||
-				action == MotionEvent.ACTION_CANCEL) {			
-			float[] point = convertSSC2WSCInPerspective1(gl, 
+				action == MotionEvent.ACTION_CANCEL) {		
+			// int width = 2.0 * Math.tan(0.5 * 45.0);
+			// int height = 0;
+			
+			float[] point = convertSSC2WSCInPerspective2(gl, 
 					event.getX(), event.getY(), width, height);
 			eventPoint = point;
 			return false;			

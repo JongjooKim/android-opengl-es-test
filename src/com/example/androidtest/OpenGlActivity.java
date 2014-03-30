@@ -43,6 +43,9 @@ public class OpenGlActivity extends Activity {
 			case 2:
 				mCurrentRender = new RenderTest3(this);
 				break;
+			case 3:
+				mCurrentRender = new RenderTest4(this);
+				break;
 			default:
 				mCurrentRender = null;
 		}
