@@ -2,10 +2,11 @@ package com.example.androidtest;
 
 import javax.microedition.khronos.opengles.GL;
 
-import com.example.android.apis.graphics.spritetext.MatrixTrackingGL;
-
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ConfigurationInfo;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,8 +32,13 @@ public class OpenGlActivity extends Activity {
 	
 	private void init() {
 		findWhichRendererToStart();
-		// setRenderer();
-		setViews();
+	}
+	
+	private boolean hasGLES20() {
+		ActivityManager am = (ActivityManager)
+                getSystemService(Context.ACTIVITY_SERVICE);
+		ConfigurationInfo info = am.getDeviceConfigurationInfo();
+		return info.reqGlEsVersion >= 0x20000;
 	}
 	
 	private void findWhichRendererToStart() {
@@ -42,38 +48,38 @@ public class OpenGlActivity extends Activity {
 		switch(index) {
 			case 0:
 				mCurrentRender = new RenderTest1(this);
+				setGLES10SurfaceView();
 				break;
 			case 1:
 				mCurrentRender = new RenderTest2(this);
+				setGLES10SurfaceView();
 				break;
 			case 2:
 				mCurrentRender = new RenderTest3(this);
+				setGLES10SurfaceView();
 				break;
 			case 3:
 				mCurrentRender = new RenderTest4(this);
+				setGLES20SurfaceView();
 				break;
 			default:
 				mCurrentRender = null;
 		}
 	}
-
-	private void setViews() {
-		setGLSurfaceView();
-	}
 	
-	private void setGLSurfaceView() {
-		glSurfaceView = (GLSurfaceView)findViewById(R.id.gl_surface_view);
-		glSurfaceView.setRenderer(mCurrentRender);
-		glSurfaceView.setGLWrapper(new GLSurfaceView.GLWrapper() {			
-			@Override
-			public GL wrap(GL gl) {
-				Log.d(LOG_TAG, "glSurfaceView.wrap() : gl : " + gl);
-				
-				return new MatrixTrackingGL(gl);
-			}
-		});
+	private void setGLES20SurfaceView() {
+		if(hasGLES20()) {
+			glSurfaceView = (GLSurfaceView)findViewById(R.id.gl_surface_view);
+			glSurfaceView.setEGLContextClientVersion(2);
+			glSurfaceView.setPreserveEGLContextOnPause(true);
+			glSurfaceView.setRenderer(mCurrentRender);			
+		}
 	}	
 	
+	private void setGLES10SurfaceView() {
+		glSurfaceView = (GLSurfaceView)findViewById(R.id.gl_surface_view);
+		glSurfaceView.setRenderer(mCurrentRender);		
+	}
 	
 	
 	@Override
@@ -92,8 +98,8 @@ public class OpenGlActivity extends Activity {
 		
 		if(mCurrentRender != null) {
 			MotionEvent event2 = MotionEvent.obtain(event);
-			// TODO converts (x, y) to (x,y) on viewport
-			// TODO subtracts height of title bar and status bar
+			// converts (x, y) to (x,y) on viewport
+			// subtracts height of title bar and status bar
 			event2.setLocation(event2.getX(), event2.getY() - statusBarHeight - titleBarHeight);	
 			mCurrentRender.handleTouchEvent(event2);
 		}

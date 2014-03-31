@@ -6,8 +6,6 @@ import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import com.example.android.apis.graphics.spritetext.MatrixGrabber;
-
 import android.R.anim;
 import android.R.integer;
 import android.R.xml;
@@ -27,11 +25,9 @@ abstract public class RenderBase implements Renderer {
 	private String LOG_TAG = "RenderBase";
 	
 	protected Context mContext;
-	private MatrixGrabber matrixGrabber;
 	
 	public RenderBase(Context context) {
 		mContext = context;
-		matrixGrabber = new MatrixGrabber();
 	}
 	
 	public FloatBuffer createFloatBuffer(float data[]){
@@ -92,6 +88,7 @@ abstract public class RenderBase implements Renderer {
 		return wc;
 	}	
 	
+	/*
 	public float[] convertSSC2WSCInPerspective1(GL10 gl, float x, float y, 
 			int width, int height) {
 		float[] posNear = new float[4];
@@ -125,6 +122,7 @@ abstract public class RenderBase implements Renderer {
 		
 		return posNear;
 	}
+	*/
 	
 	public float[] convertSSC2WSCInPerspective2(GL10 gl, float x, float y, 
 			int width, int height) {		
