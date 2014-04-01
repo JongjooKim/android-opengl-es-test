@@ -15,7 +15,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 
 /**
- * This class also displays a grid in perpective mode.
+ * This class also displays a grid in perpective mode. Not available currently.
  *  
  * @author Jongjoo Kim
  *
@@ -58,10 +58,6 @@ public class RenderTest3 extends RenderBase {
 	
 	private GL10 gl;
 	private float[] eventPoint;
-	private float[] MVPMatrix = new float[16];
-	private float[] modelViewMatrix = new float[16];
-	private float[] projectionMatrix = new float[16];
-	private float[] perspectiveMatrix = new float[16];
 	private int width, height;
 	
 	private FloatBuffer lineBuffer;
@@ -79,8 +75,7 @@ public class RenderTest3 extends RenderBase {
 		Log.d(LOG_TAG, "onDrawFrame() : beginning...");
 		
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-		// gl.glLoadIdentity();
-		Matrix.setIdentityM(modelViewMatrix, 0);
+		gl.glLoadIdentity();
 		
 		gl.glEnable(GL10.GL_DEPTH_TEST);
 		gl.glDepthFunc(GL10.GL_LEQUAL);
@@ -91,8 +86,7 @@ public class RenderTest3 extends RenderBase {
 		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, lineBuffer);
 		gl.glColorPointer(4, GL10.GL_FLOAT, 0, colorBuffer);
 		
-		Matrix.setLookAtM(modelViewMatrix, 0, 0.0f, 0.0f, 4.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-		// GLU.gluLookAt(gl, 0.0f, 0.0f, 4.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		GLU.gluLookAt(gl, 0.0f, 0.0f, 4.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 			
 		// fills upper-left field
 		gl.glPushMatrix();
@@ -169,17 +163,14 @@ public class RenderTest3 extends RenderBase {
 		this.width = width;
 		this.height = height;
 		
-		// gl.glMatrixMode(GL10.GL_PROJECTION);
-		// gl.glLoadIdentity();
-		Matrix.setIdentityM(modelViewMatrix, 0);
+		gl.glMatrixMode(GL10.GL_PROJECTION);
+		gl.glLoadIdentity();
 		
 		gl.glViewport(0, 0, width, height);		
-		// GLU.gluPerspective(gl, 45.0f, 1.0f * width / height, 1.0f, 100.0f);
-		Matrix.perspectiveM(perspectiveMatrix, 0, 45.0f, 1.0f * width / height, 1.0f, 100.0f);
+		GLU.gluPerspective(gl, 45.0f, 1.0f * width / height, 1.0f, 100.0f);
 		
-		// gl.glMatrixMode(GL10.GL_MODELVIEW);
-		// gl.glLoadIdentity();
-		Matrix.setIdentityM(projectionMatrix, 0);
+		gl.glMatrixMode(GL10.GL_MODELVIEW);
+		gl.glLoadIdentity();
 	}
 
 	@Override
@@ -204,10 +195,8 @@ public class RenderTest3 extends RenderBase {
 				action == MotionEvent.ACTION_MOVE ||
 				action == MotionEvent.ACTION_UP ||
 				action == MotionEvent.ACTION_CANCEL) {		
-			// int width = 2.0 * Math.tan(0.5 * 45.0);
-			// int height = 0;
 			/*
-			float[] point = convertSSC2WSCInPerspective2(gl, 
+			float[] point = convertSSC2WSCInPerspective1(gl, 
 					event.getX(), event.getY(), width, height);
 			eventPoint = point;
 			*/
