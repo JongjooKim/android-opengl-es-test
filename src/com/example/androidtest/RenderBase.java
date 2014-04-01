@@ -3,6 +3,7 @@ package com.example.androidtest;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -34,6 +35,14 @@ abstract public class RenderBase implements Renderer {
 		ByteBuffer vbb = ByteBuffer.allocateDirect(data.length * 4);
 		vbb.order(ByteOrder.nativeOrder());
 		FloatBuffer outBuffer = vbb.asFloatBuffer();
+		outBuffer.put(data).position(0);
+		return outBuffer;
+	}
+	
+	public ShortBuffer createShortBuffer(short data[]) {
+		ByteBuffer vbb = ByteBuffer.allocateDirect(data.length * 2);
+		vbb.order(ByteOrder.nativeOrder());
+		ShortBuffer outBuffer = vbb.asShortBuffer();
 		outBuffer.put(data).position(0);
 		return outBuffer;
 	}

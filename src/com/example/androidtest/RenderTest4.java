@@ -63,5 +63,16 @@ public class RenderTest4 extends RenderBase {
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 		Log.d(LOG_TAG, "onSurfaceCreated() : gl : " + gl);
 		
+		vertices = new float[] {
+				10.0f, 200f,  0.0f,
+				10.0f, 100f, 0.0f,
+				100f, 100f, 0.0f,
+		};
+		indices = new short[] {0, 1, 2};
+		
+		vertextBuffer = createFloatBuffer(vertices);
+		drawListBuffer = createShortBuffer(indices);
+		GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		
 	}	
 }
