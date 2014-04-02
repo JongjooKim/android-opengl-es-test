@@ -1,5 +1,9 @@
 package com.example.androidtest;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -15,6 +19,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.PointF;
+import android.opengl.GLES20;
 import android.opengl.GLU;
 import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
@@ -47,7 +52,33 @@ abstract public class RenderBase implements Renderer {
 		return outBuffer;
 	}
 	
-	public Bitmap getTextureFromBitmapResource(Context context, int resourceId) {
+	public String getTextureFromBitmapResourceES20(Context context, int resourceId) {
+		final InputStream inputStream = context.getResources().openRawResource(resourceId);
+		final InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+		final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+		
+		String nextLine;
+		final StringBuilder builder = new StringBuilder();
+		try {
+			while((nextLine = bufferedReader.readLine()) != null) {
+				builder.append(nextLine);
+				builder.append('\n');
+			}
+		} catch(IOException e) {
+			Log.e(LOG_TAG, "getTextureFromBitmapResourceES20() : exception : " + e.getMessage());
+			return null;
+		}
+		
+		return builder.toString();
+	}
+	
+	/**
+	 * Used in OpenGL ES 1.0
+	 * @param context
+	 * @param resourceId
+	 * @return
+	 */
+	public Bitmap getTextureFromBitmapResourcES10(Context context, int resourceId) {
 		Bitmap bitmap = null;
 		Matrix yFlipMatrix = new Matrix();
 		yFlipMatrix.postScale(1, -1); // flip Y axis		
@@ -95,7 +126,65 @@ abstract public class RenderBase implements Renderer {
 		wc[2] = 0.f;
 		
 		return wc;
-	}	
+	}
+	
+	public int compileShader(final int shaderType, final String shaderSource){
+		int shaderHandle = GLES20.glCreateShader(shaderType);
+		
+		if(shaderHandle != 0) {
+			GLES20.glShaderSource(shaderHandle, shaderSource);
+			GLES20.glCompileShader(shaderHandle);
+			final int[] compileStatus = new int[1];
+			GLES20.glGetShaderiv(shaderHandle, GLES20.GL_COMPILE_STATUS, compileStatus, 0);
+			
+			if(compileStatus[0] == 0) {
+				Log.e(LOG_TAG, "compileShader() : exception : " + 
+						GLES20.glGetShaderInfoLog(shaderHandle));
+				GLES20.glDeleteShader(shaderHandle);
+				shaderHandle = 0;
+			}
+		}
+		
+		if(shaderHandle == 0) {
+			throw new RuntimeException("compileShader() : Error creating shader.");
+		}
+		
+		return shaderHandle;
+	}
+	
+	public int createAndLinkProgram(final int vertexShaderHandle, 
+			final int fragmentShaderHandle, final String[] attributes) {
+		int programHandle = GLES20.glCreateProgram();
+		
+		if(programHandle != 0) {
+			GLES20.glAttachShader(programHandle, vertexShaderHandle);
+			GLES20.glAttachShader(programHandle, fragmentShaderHandle);
+			
+			if(attributes != null) {
+				final int size = attributes.length;
+				for(int i = 0; i < size; i++) {
+					GLES20.glBindAttribLocation(programHandle, i, attributes[i]);
+				}
+			}
+			
+			GLES20.glLinkProgram(programHandle);
+			final int[] linkStatus = new int[1];
+			GLES20.glGetProgramiv(programHandle, GLES20.GL_LINK_STATUS, linkStatus, 0);
+			
+			if(linkStatus[0] == 0) {
+				Log.e(LOG_TAG, "createAndLinkProgram() : exception : " +
+						GLES20.glGetProgramInfoLog(programHandle));
+				GLES20.glDeleteProgram(programHandle);
+				programHandle = 0;
+			}
+		}
+		
+		if(programHandle == 0) {
+			throw new RuntimeException("createAndLinkProgram() : Error creating program.");
+		}
+		
+		return programHandle;
+	}
 	
 	/*
 	public float[] convertSSC2WSCInPerspective1(GL10 gl, float x, float y, 
