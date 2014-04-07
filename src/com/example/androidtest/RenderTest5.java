@@ -24,8 +24,10 @@ import android.view.MotionEvent;
 public class RenderTest5 extends RenderBase {
 	private final String LOG_TAG = "RenderTest5";
 
+	private float[] modelMatrix = new float[16];
 	private float[] viewMatrix = new float[16];
 	private float[] projectionMatrix = new float[16];
+	private float[] MVPMatrix = new float[16];
 	
 	private final int strideBytes = 7 * 4;
 	
@@ -88,7 +90,10 @@ public class RenderTest5 extends RenderBase {
 	// fragment shader -- end
 
 	public RenderTest5(Context context) {
-		super(context);				
+		super(context);			
+		
+		
+		
 	}
 
 	@Override
@@ -96,57 +101,45 @@ public class RenderTest5 extends RenderBase {
 		Log.d(LOG_TAG, "onDrawFrame() : beginning...");
 		
 		GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
-	
-		// draws
-		// fills upper-left field
-		gl.glPushMatrix();
+			
+		// fills upper-left field			
 		for(int i = 1; i <= 10; i++) {			
 			for(int j = 0; j < 10; j++) {
-				gl.glPushMatrix();
-				gl.glTranslatef(-0.1f * i, +0.1f * j, 0.0f);
-				gl.glDrawArrays(GL10.GL_LINE_LOOP, 0, 4);
-				gl.glPopMatrix();
+				Matrix.setIdentityM(modelMatrix, 0);		
+				Matrix.translateM(modelMatrix, 0, -0.1f * i, +0.1f * j, 0.0f);
+				drawSquare(squareVerticesBuffer);
 			}
 		}
-		gl.glPopMatrix();
-		// fills upper-right field
-		gl.glPushMatrix();
+		
+		// fills upper-right field		
 		for(int i = 0; i < 10; i++) {			
 			for(int j = 0; j < 10; j++) {
-				gl.glPushMatrix();
-				gl.glTranslatef(+0.1f * i, +0.1f * j, 0.0f);
-				gl.glDrawArrays(GL10.GL_LINE_LOOP, 0, 4);
-				gl.glPopMatrix();
+				Matrix.setIdentityM(modelMatrix, 0);
+				Matrix.translateM(modelMatrix, 0, +0.1f * i, +0.1f * j, 0.0f);
+				drawSquare(squareVerticesBuffer);
 			}
 		}
-		gl.glPopMatrix();
-		// fills lower-left field
-		gl.glPushMatrix();
+		
+		// fills lower-left field			
 		for(int i = 1; i <= 10; i++) {			
 			for(int j = 1; j <= 10; j++) {
-				gl.glPushMatrix();
-				gl.glTranslatef(-0.1f * i, -0.1f * j, 0.0f);
-				gl.glDrawArrays(GL10.GL_LINE_LOOP, 0, 4);
-				gl.glPopMatrix();
+				Matrix.setIdentityM(modelMatrix, 0);
+				Matrix.translateM(modelMatrix, 0, -0.1f * i, -0.1f * j, 0.0f);
+				drawSquare(squareVerticesBuffer);
 			}
 		}
-		gl.glPopMatrix();
-		// fills lower-right field
-		gl.glPushMatrix();
+		
+		// fills lower-right field	
 		for(int i = 0; i < 10; i++) {			
 			for(int j = 1; j <= 10; j++) {
-				gl.glPushMatrix();
-				gl.glTranslatef(+0.1f * i, -0.1f * j, 0.0f);
-				gl.glDrawArrays(GL10.GL_LINE_LOOP, 0, 4);
-				gl.glPopMatrix();
+				Matrix.setIdentityM(modelMatrix, 0);
+				Matrix.translateM(modelMatrix, 0, +0.1f * i, -0.1f * j, 0.0f);				
+				drawSquare(squareVerticesBuffer);
 			}
-		}
-		gl.glPopMatrix();
+		}		
 		
-		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, originBuffer);
-		gl.glColorPointer(4, GL10.GL_FLOAT, 0, originColorBuffer);
-		
-		gl.glDrawArrays(GL10.GL_LINE_LOOP, 0, 4);	
+		Matrix.setIdentityM(modelMatrix, 0);
+		drawSquare(originVerticesBuffer);			
 		
 		Log.d(LOG_TAG, "onDrawFrame() : ending...");
 	}
@@ -164,7 +157,11 @@ public class RenderTest5 extends RenderBase {
 				false, strideBytes, squareBuffer);
 		GLES20.glEnableVertexAttribArray(colorHandle);
 		
+		Matrix.multiplyMM(MVPMatrix, 0, viewMatrix, 0, modelMatrix, 0);
+		Matrix.multiplyMM(MVPMatrix, 0, projectionMatrix, 0, MVPMatrix, 0);
 		
+		GLES20.glUniformMatrix4fv(MVPMatrixHandle, 1, false, MVPMatrix, 0);
+		GLES20.glDrawArrays(GLES20.GL_LINE_LOOP, 0, 4);
 	}
 
 	@Override
@@ -190,7 +187,7 @@ public class RenderTest5 extends RenderBase {
 		Log.d(LOG_TAG, "onSurfaceCreated() : gl : " + gl);
 	
 		GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);		
-		Matrix.setLookAtM(viewMatrix, 0, 0.0f, 0.0f, 4.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		Matrix.setLookAtM(viewMatrix, 0, 0.0f, 0.0f, 2.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 		
 		squareVerticesBuffer = this.createFloatBuffer(squareVerticesData);
 		originVerticesBuffer = this.createFloatBuffer(originVerticesData);
