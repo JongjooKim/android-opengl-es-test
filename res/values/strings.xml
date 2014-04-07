@@ -4,14 +4,10 @@
     
     <string name="texture_coordinate">Texture on a coordinate</string>
     <string name="grid_othorgonal">Grid on orthogonal mode</string>
-    <string name="grid_perspective">Grid on perspective mode(ray-casting)</string>
-    <string name="basic_shader1">Basic Shader1</string>
-    <string name="basic_shader2">Basic Shader2</string>
+    <string name="grid_perspective">Grid on perspective mode(ray-casting)</string>    
     <string-array name="opengl_test_list">
         <item>@string/texture_coordinate</item>
         <item>@string/grid_othorgonal</item>
-        <item>@string/grid_perspective</item>
-        <item>@string/basic_shader1</item>
-        <item>@string/basic_shader2</item>
+        <item>@string/grid_perspective</item>        
     </string-array>
 </resources>

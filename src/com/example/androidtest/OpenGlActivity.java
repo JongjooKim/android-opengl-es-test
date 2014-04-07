@@ -56,15 +56,8 @@ public class OpenGlActivity extends Activity {
 				break;
 			case 2:
 				mCurrentRender = new RenderTest3(this);
-				setGLES10SurfaceView();
-				break;
-			case 3:
-				mCurrentRender = new RenderTest4(this);
 				setGLES20SurfaceView();
-				break;
-			case 4:
-				mCurrentRender = new RenderTest5(this);
-				setGLES20SurfaceView();
+				break;			
 			default:
 				mCurrentRender = null;
 		}
