@@ -106,7 +106,7 @@ public class RenderTest1 extends RenderBase {
 	}
 	
 	private boolean loadTextures(GL10 gl, int res) {
-		Bitmap bmp = getTextureFromBitmapResource(mContext, res);
+		Bitmap bmp = getTextureFromBitmapResourcES10(mContext, res);
 
 		int[] textures = new int[1];
 		gl.glGenTextures(1, textures, 0);
