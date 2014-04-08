@@ -8,6 +8,8 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.graphics.PointF;
+import android.opengl.GLES20;
+import android.opengl.Matrix;
 import android.util.Log;
 import android.view.MotionEvent;
 
@@ -21,75 +23,88 @@ import android.view.MotionEvent;
 public class RenderTest2 extends RenderBase {
 	private final String LOG_TAG = "RenderTest2";
 	
-	private long currentTime = 0L;
-	private int count = 0;
+	private float[] modelMatrix = new float[16];
+	private float[] viewMatrix = new float[16];
+	private float[] projectionMatrix = new float[16];
+	private float[] MVPMatrix = new float[16];
 	
 	private PointF eventPointF;
 	private int width, height;
-	
-	/**
-	 * Every vertext in OpenGL is normalized between [-1, 1].
-	 * a line from (0, 0) -> (0.1, 0.0) 
-	 */
-	private float[] vertices = {
+		
+	private float[] squareVerticesData = {
 			0.0f, 0.0f, 0.0f,
+			1.0f, 1.0f, 1.0f, 1.0f,
 			0.1f, 0.0f, 0.0f,
+			1.0f, 1.0f, 1.0f, 1.0f,
 			0.1f, 0.1f, 0.0f,
+			1.0f, 1.0f, 1.0f, 1.0f,
 			0.0f, 0.1f, 0.0f,
+			1.0f, 1.0f, 1.0f, 1.0f,
 	};
 	
-	private float[] origin = {
+	private float[] originVerticesData = {
 		-0.01f, -0.01f, 0.0f,
+		1.0f, 0.0f, 0.0f, 1.0f,
 		+0.01f, -0.01f, 0.0f,
+		1.0f, 0.0f, 0.0f, 1.0f,
 		-0.01f, +0.01f, 0.0f,
+		1.0f, 0,0f, 0.0f, 1.0f,
 		+0.01f, +0.01f, 0.0f,
+		1.0f, 0.0f, 0.0f, 1.0f,
 	};
 	
-	private float[] colors = {
-			1.0f, 1.0f, 1.0f, 1.0f,
-			1.0f, 1.0f, 1.0f, 1.0f,
-			1.0f, 1.0f, 1.0f, 1.0f,
-			1.0f, 1.0f, 1.0f, 1.0f,
-	};
-	
-	private float[] redColor = {
-			1.0f, 0.0f, 0.0f, 1.0f,
-			1.0f, 0.0f, 0.0f, 1.0f,
-			1.0f, 0.0f, 0.0f, 1.0f,
-			1.0f, 0.0f, 0.0f, 1.0f,
-	};
-	
+	private float[] touchPointVerticesData;
+	/*
 	private float[] blueCoor = {
 			0.0f, 0.0f, 1.0f, 1.0f,
 			0.0f, 0.0f, 1.0f, 1.0f,
 			0.0f, 0.0f, 1.0f, 1.0f,
 			0.0f, 0.0f, 1.0f, 1.0f,
 	};
+	*/
 	
-	private FloatBuffer lineBuffer;
-	private FloatBuffer colorBuffer;
-	private FloatBuffer originBuffer;
-	private FloatBuffer redColorBuffer;
-	private FloatBuffer blueColorBuffer;
+	FloatBuffer squareVerticesBuffer;
+	FloatBuffer originVerticesBuffer;
+	FloatBuffer touchPointVerticesBuffer;
+	
+	// vertex shader -- start
+	private String vertexShader = 
+			"uniform mat4 u_MVPMatrix;" +
+	
+			"attribute vec4 a_Position;" + 
+			"attribute vec4 a_Color;" +
+			
+			"varying vec4 v_Color;"+
+			
+			"void main()" + 
+			"{" +
+			"	v_Color = a_Color;" +
+			
+			"	gl_Position = u_MVPMatrix * a_Position;" +
+			"}";
+	// vertex shader -- end
+	
+	// fragment shader -- start
+	private String fragmentShader =
+			"precision mediump float;" +
+			
+			"varying vec4 v_Color;" +
+			
+			"void main()" +
+			"{" +
+			"	gl_FragColor = v_Color;" +
+			"}";
+	// fragment shader -- end
 
 	public RenderTest2(Context context) {
 		super(context);	
-		currentTime = System.currentTimeMillis();
 	}
 
 	@Override
 	public void onDrawFrame(GL10 gl) {
 		// Log.d(LOG_TAG, "onDrawFrame() : gl : " + gl);
 		
-		gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		
-		long time = System.currentTimeMillis();
-		count++;
-		if(time - currentTime >= 1000) {
-			currentTime = time;
-			Log.d(LOG_TAG, "onDrawFrame() : 1 second elapsed. The count is " + count);
-			count = 0;
-		}
+		gl.glClear(GL10.GL_COLOR_BUFFER_BIT);		
 		
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
@@ -178,14 +193,13 @@ public class RenderTest2 extends RenderBase {
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 		Log.d(LOG_TAG, "onSurfaceCreated() : gl : " + gl);
 		
-		lineBuffer = createFloatBuffer(vertices);
-		colorBuffer = createFloatBuffer(colors);
-		originBuffer = createFloatBuffer(origin);
-		redColorBuffer = createFloatBuffer(redColor);
-		blueColorBuffer = createFloatBuffer(blueCoor);
+		GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		Matrix.orthoM(viewMatrix, 0, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
 		
-		gl.glOrthof(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, +1.0f);
-		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		squareVerticesBuffer = this.createFloatBuffer(squareVerticesData);
+		originVerticesBuffer = this.createFloatBuffer(originVerticesData);
+		
+		// blueColorBuffer = createFloatBuffer(blueCoor);		
 	}
 	
 	@Override
