@@ -49,14 +49,14 @@ public class RenderTest2 extends RenderBase {
 	};
 	
 	private float[] originVerticesData = {
-		-0.01f, -0.01f, 0.0f,
+		-0.03f, -0.03f, 0.0f,
 		1.0f, 0.0f, 0.0f, 1.0f,
-		+0.01f, -0.01f, 0.0f,
+		+0.03f, -0.03f, 0.0f,
 		1.0f, 0.0f, 0.0f, 1.0f,
-		-0.01f, +0.01f, 0.0f,
-		1.0f, 0,0f, 0.0f, 1.0f,
-		+0.01f, +0.01f, 0.0f,
+		+0.03f, +0.03f, 0.0f,
 		1.0f, 0.0f, 0.0f, 1.0f,
+		-0.03f, +0.03f, 0.0f,
+		1.0f, 0,0f, 0.0f, 1.0f,		
 	};
 	
 	private float[] touchPointVerticesData;
@@ -76,10 +76,8 @@ public class RenderTest2 extends RenderBase {
 	// vertex shader -- start
 	private String vertexShader = 
 			"uniform mat4 u_MVPMatrix;" +
-	
 			"attribute vec4 a_Position;" + 
-			"attribute vec4 a_Color;" +
-			
+			"attribute vec4 a_Color;" +			
 			"varying vec4 v_Color;"+
 			
 			"void main()" + 
@@ -92,8 +90,7 @@ public class RenderTest2 extends RenderBase {
 	
 	// fragment shader -- start
 	private String fragmentShader =
-			"precision mediump float;" +
-			
+			"precision mediump float;" +			
 			"varying vec4 v_Color;" +
 			
 			"void main()" +
@@ -117,39 +114,37 @@ public class RenderTest2 extends RenderBase {
 				Matrix.translateM(modelMatrix, 0, -0.1f * i, +0.1f * j, 0.0f);	
 				drawSquare(squareVerticesBuffer);							
 			}
-		}		
+		}
+		
 		// fills upper-right field
 		for(int i = 0; i <= 10; i++) {			
 			for(int j = 0; j < 10; j++) {
-				gl.glPushMatrix();
-				gl.glTranslatef(+0.1f * i, +0.1f * j, 0.0f);
-				gl.glDrawArrays(GL10.GL_LINE_LOOP, 0, 4);
+				Matrix.setIdentityM(modelMatrix, 0);
+				Matrix.translateM(modelMatrix, 0, +0.1f * i, +0.1f * j, 0.0f);
+				drawSquare(squareVerticesBuffer);
 			}
 		}
 		// fills lower-left field
 		for(int i = 1; i <= 10; i++) {			
 			for(int j = 1; j <= 10; j++) {
-				gl.glPushMatrix();
-				gl.glTranslatef(-0.1f * i, -0.1f * j, 0.0f);
-				gl.glDrawArrays(GL10.GL_LINE_LOOP, 0, 4);
+				Matrix.setIdentityM(modelMatrix, 0);
+				Matrix.translateM(modelMatrix, 0, -0.1f * i, -0.1f * j, 0.0f);
+				drawSquare(squareVerticesBuffer);
 			}
 		}
 		// fills lower-right field
 		for(int i = 0; i < 10; i++) {			
 			for(int j = 1; j <= 10; j++) {
-				gl.glPushMatrix();
-				gl.glTranslatef(+0.1f * i, -0.1f * j, 0.0f);
-				gl.glDrawArrays(GL10.GL_LINE_LOOP, 0, 4);				
+				Matrix.setIdentityM(modelMatrix, 0);
+				Matrix.translateM(modelMatrix, 0, +0.1f * i, -0.1f * j, 0.0f);
+				drawSquare(squareVerticesBuffer);		
 			}
 		}
 		
+		Matrix.setIdentityM(modelMatrix, 0);
+		drawSquare(originVerticesBuffer);
 		
-		gl.glColorPointer(4, GL10.GL_FLOAT, 0, redColorBuffer);
-		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, originBuffer);
-		
-		gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
-		
-		
+		/*
 		if(eventPointF != null) {
 			float[] eventPoint = {
 					eventPointF.x - 0.01f, eventPointF.y - 0.01f, 0.0f,
@@ -164,6 +159,7 @@ public class RenderTest2 extends RenderBase {
 			
 			gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
 		}
+		*/
 	}
 	
 	private void drawSquare(FloatBuffer buffer) {
@@ -175,7 +171,27 @@ public class RenderTest2 extends RenderBase {
 		GLES20.glEnableVertexAttribArray(positionHandle);
 		
 		buffer.position(3);
-		GLES20.glVertexAttribPointer(colorHandle, 0, GLES20.GL_FLOAT, false, 
+		GLES20.glVertexAttribPointer(colorHandle, 4, GLES20.GL_FLOAT, false, 
+				strideBytes, buffer);
+		GLES20.glEnableVertexAttribArray(colorHandle);
+		
+		Matrix.multiplyMM(MVPMatrix, 0, viewMatrix, 0, modelMatrix, 0);
+		// Matrix.multiplyMM(MVPMatrix, 0, projectionMatrix, 0, MVPMatrix, 0);
+		
+		GLES20.glUniformMatrix4fv(MVPMatrixHandle, 1, false, MVPMatrix, 0);
+		GLES20.glDrawArrays(GLES20.GL_LINE_LOOP, 0, 4);
+	}
+	
+	private void drawFilledSquare(FloatBuffer buffer) {
+		Log.d(LOG_TAG, "drawSquare() is called...");
+		
+		buffer.position(0);
+		GLES20.glVertexAttribPointer(positionHandle, 3, GLES20.GL_FLOAT, false, 
+				strideBytes, buffer);
+		GLES20.glEnableVertexAttribArray(positionHandle);
+		
+		buffer.position(3);
+		GLES20.glVertexAttribPointer(colorHandle, 4, GLES20.GL_FLOAT, false, 
 				strideBytes, buffer);
 		GLES20.glEnableVertexAttribArray(colorHandle);
 		
