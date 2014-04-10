@@ -59,15 +59,10 @@ public class RenderTest2 extends RenderBase {
 		1.0f, 0,0f, 0.0f, 1.0f,		
 	};
 	
-	private float[] touchPointVerticesData;
-	/*
-	private float[] blueCoor = {
-			0.0f, 0.0f, 1.0f, 1.0f,
-			0.0f, 0.0f, 1.0f, 1.0f,
-			0.0f, 0.0f, 1.0f, 1.0f,
-			0.0f, 0.0f, 1.0f, 1.0f,
-	};
-	*/
+	private float[] touchPointVerticesData;	
+	private float[] blueColorArray = {
+			0.0f, 0.0f, 1.0f, 1.0f,	
+	};	
 	
 	FloatBuffer squareVerticesBuffer;
 	FloatBuffer originVerticesBuffer;
@@ -143,23 +138,24 @@ public class RenderTest2 extends RenderBase {
 		
 		Matrix.setIdentityM(modelMatrix, 0);
 		drawSquare(originVerticesBuffer);
-		
-		/*
+				
 		if(eventPointF != null) {
+			float[] b = blueColorArray;
 			float[] eventPoint = {
-					eventPointF.x - 0.01f, eventPointF.y - 0.01f, 0.0f,
-					eventPointF.x + 0.01f, eventPointF.y - 0.01f, 0.0f,
-					eventPointF.x - 0.01f, eventPointF.y + 0.01f, 0.0f,
-					eventPointF.x + 0.01f, eventPointF.y + 0.01f, 0.0f,
+					eventPointF.x - 0.03f, eventPointF.y - 0.03f, 0.0f,
+					b[0], b[1], b[2], b[3],
+					eventPointF.x + 0.03f, eventPointF.y - 0.03f, 0.0f,
+					b[0], b[1], b[2], b[3],
+					eventPointF.x + 0.03f, eventPointF.y + 0.03f, 0.0f,
+					b[0], b[1], b[2], b[3],
+					eventPointF.x - 0.03f, eventPointF.y + 0.03f, 0.0f,
+					b[0], b[1], b[2], b[3],
 			};
 			FloatBuffer eventPointBuffer = createFloatBuffer(eventPoint);
 			
-			gl.glVertexPointer(3, GL10.GL_FLOAT, 0, eventPointBuffer);
-			gl.glColorPointer(4, GL10.GL_FLOAT, 0, blueColorBuffer);
-			
-			gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
-		}
-		*/
+			Matrix.setIdentityM(modelMatrix, 0);
+			drawSquare(eventPointBuffer);
+		}		
 	}
 	
 	private void drawSquare(FloatBuffer buffer) {
@@ -180,27 +176,7 @@ public class RenderTest2 extends RenderBase {
 		
 		GLES20.glUniformMatrix4fv(MVPMatrixHandle, 1, false, MVPMatrix, 0);
 		GLES20.glDrawArrays(GLES20.GL_LINE_LOOP, 0, 4);
-	}
-	
-	private void drawFilledSquare(FloatBuffer buffer) {
-		Log.d(LOG_TAG, "drawSquare() is called...");
-		
-		buffer.position(0);
-		GLES20.glVertexAttribPointer(positionHandle, 3, GLES20.GL_FLOAT, false, 
-				strideBytes, buffer);
-		GLES20.glEnableVertexAttribArray(positionHandle);
-		
-		buffer.position(3);
-		GLES20.glVertexAttribPointer(colorHandle, 4, GLES20.GL_FLOAT, false, 
-				strideBytes, buffer);
-		GLES20.glEnableVertexAttribArray(colorHandle);
-		
-		Matrix.multiplyMM(MVPMatrix, 0, viewMatrix, 0, modelMatrix, 0);
-		// Matrix.multiplyMM(MVPMatrix, 0, projectionMatrix, 0, MVPMatrix, 0);
-		
-		GLES20.glUniformMatrix4fv(MVPMatrixHandle, 1, false, MVPMatrix, 0);
-		GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
-	}
+	}	
 
 	@Override
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
