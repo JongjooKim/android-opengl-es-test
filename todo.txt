@@ -1,0 +1,3 @@
+porting to OpenGL ES 2.0
+appending touch point to perspective mode using ray-tracing
+making a simple chart in perspective mode
